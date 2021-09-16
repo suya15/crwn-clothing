@@ -8,17 +8,11 @@ import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up
 
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import React from 'react';
+import { setCurrentUser } from './redux/user/user.actions';
+import {connect} from 'react-redux';
 
 
 class App extends React.Component {
-
-  constructor() {
-    super();
-
-    this.state = {
-      currentUser: null
-    }
-  }
 
   // unsubscribing the auth to avoid memory leak
 
@@ -26,6 +20,8 @@ class App extends React.Component {
 
 
   componentDidMount() {
+    const {setCurrentUser} = this.props;
+
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
 
       if (userAuth) {
@@ -33,19 +29,16 @@ class App extends React.Component {
         const userRef = await createUserProfileDocument(userAuth);
 
         userRef.onSnapshot(snapshot => {
-          this.setState({
-            currentUser: {
-              id: snapshot.id,
-              ...snapshot.data()
-            }
+          setCurrentUser({
+            id: snapshot.id,
+            ...snapshot.data()
           })
-
           console.log(this.state);
         });
       }
       else {
-        // always remember setState is async with its results
-        this.setState({currentUser: userAuth}); 
+        // always remember setState is async with its results // removed setState after using action dispatch
+        setCurrentUser(userAuth); // to setCurrentUser we only need to pass the values which we want to modify
       }
 
     });
@@ -59,7 +52,7 @@ class App extends React.Component {
 
     return (
       <div>
-        <Header currentUser={this.state.currentUser} />
+        <Header />
         <Switch>
           <Route exact path='/' component={HomePage} />
           <Route exact path='/shop' component={ShopPage} />
@@ -73,4 +66,8 @@ class App extends React.Component {
 
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user)) // note is all about this dispatch understand carefully
+});
+
+export default connect(null, mapDispatchToProps)(App); // note has menion of this too
