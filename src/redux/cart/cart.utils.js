@@ -9,6 +9,6 @@ export const addItemToCart = (cartItems, cartItemToAdd) => {
             )
     }
 
-    // since this below return will not run if the above if gets executed
+    // since this below return will not run if the above if gets executed, it will only run on items first entry
     return [...cartItems, {...cartItemToAdd, quantity: 1}]
 };

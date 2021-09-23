@@ -4,6 +4,7 @@ import './cart-icon.styles.scss';
 import { connect } from 'react-redux';
 import { toggleCartHidden } from '../../redux/cart/cart.actions';
 import { selectCartItemsCount } from '../../redux/cart/cart.selectors';
+import { createStructuredSelector } from 'reselect';
 
 const CartIcon = ({toggleCartHidden, itemCount}) => (
     <div className="cart-icon" onClick={toggleCartHidden}>
@@ -15,7 +16,7 @@ const CartIcon = ({toggleCartHidden, itemCount}) => (
 );
 
 
-// without using selector for optimization
+// without using memoized selector for optimization
 // const mapStateToProps = ({ cart: {cartItems }}) => (
 //     {
 //         // we have just written a selector here because we have written a code in which we are getting the
@@ -27,14 +28,14 @@ const CartIcon = ({toggleCartHidden, itemCount}) => (
 // )
 
 
-// using selector 
+// using memoized selector 
 
-const mapStateToProps = (state) => (
+const mapStateToProps = createStructuredSelector(
     {
         // we have just written a memoize selector here because we have written a code in which we are getting the
         // whole state out but pulling a certain value to get our things done.
 
-        itemCount: selectCartItemsCount(state)
+        itemCount: selectCartItemsCount
     }
 )
 
