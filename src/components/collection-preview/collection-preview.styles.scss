@@ -1,3 +1,5 @@
+
+// flex direction coloumn for title and items of that title
 .collection-preview {
     display: flex;
     flex-direction: column;
@@ -8,6 +10,7 @@
       margin-bottom: 25px;
     }
   
+    // for the items of a particular title here it is flex direction row
     .preview {
       display: flex;
       justify-content: space-between;
