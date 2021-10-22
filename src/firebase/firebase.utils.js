@@ -45,6 +45,45 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   return userRef;
 };
 
+// utility func to convert the query docs to shopdata strucuture using map and adding desired feilds to the entities, 
+// following this the data will be further structred to mapped structure
+// this is one of the most important use of reduce
+
+export const convertCollectionsSnapshotToMap = (collectionsSnapshot) => {
+  // structuring the shop data
+  const transformedCollection = collectionsSnapshot.docs.map(docSnapshot => {
+    const{title,items} = docSnapshot.data();
+
+    return{
+        routeName: encodeURI(title.toLowerCase()),
+        id: docSnapshot.id,
+        title,
+        items
+    };
+  });
+
+  // mapping the data like hash map
+  return transformedCollection.reduce((accumulator, collection) => {
+    accumulator[collection.title.toLowerCase()] = collection;
+    return accumulator;
+  }, {});
+};
+
+// utility to make collections and documents to it
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+ const collectionRef = await firestore.collection(collectionKey);
+
+ const batch = firestore.batch();
+ objectsToAdd.forEach(obj => {
+   // making ref for each object by firestore generated id
+   const newDocRef = collectionRef.doc();
+   batch.set(newDocRef, obj);
+ });
+
+ // commit returns promise with success null value
+ return await batch.commit();
+};
+
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 

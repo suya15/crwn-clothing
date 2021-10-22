@@ -6,13 +6,14 @@ import ShopPage from './pages/shop/shop.component';
 import Header from './components/header/header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 
-import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import { addCollectionAndDocuments, auth, createUserProfileDocument } from './firebase/firebase.utils';
 import React from 'react';
 import { setCurrentUser } from './redux/user/user.actions';
 import { connect } from 'react-redux';
 import { selectCurrentUser } from './redux/user/user.selectors';
 import { createStructuredSelector } from 'reselect';
 import CheckoutPage from './pages/checkout/checkout.component';
+// import { selectCollectionsForPreview } from './redux/shop/shop.selectors';
 
 
 class App extends React.Component {
@@ -23,7 +24,9 @@ class App extends React.Component {
 
 
   componentDidMount() {
-    const { setCurrentUser } = this.props;
+    const { setCurrentUser
+      //  collectionsArray 
+      } = this.props;
 
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
 
@@ -36,12 +39,15 @@ class App extends React.Component {
             id: snapshot.id,
             ...snapshot.data()
           })
-          console.log(this.state);
         });
       }
       else {
         // always remember setState is async with its results // removed setState after using action dispatch
         setCurrentUser(userAuth); // to setCurrentUser we only need to pass the values which we want to modify
+
+        // below function is called only so that we can write the shop data programmatically by calling a util
+        // function so that we dont have to write ourselves into database
+        // addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({title, items}))); 
       }
 
     });
@@ -83,7 +89,9 @@ class App extends React.Component {
 
 //  using createStructuredSelector
 const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
+  currentUser: selectCurrentUser,
+  // below was just did to make collection and doc to it from shop data file 
+  // collectionsArray: selectCollectionsForPreview
 });
 
 

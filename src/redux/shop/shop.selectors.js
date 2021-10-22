@@ -34,12 +34,13 @@ export const selectCollection = memoize(collectionUrlParam =>
         // collections => collections.find(
         //     collection => collection.id === COLLECTION_ID_MAP[collectionUrlParam]
         // )
-        collections => collections[collectionUrlParam]
+        collections => collections ?  collections[collectionUrlParam] : null
     ));
 
-  // for collection preview we are getting collection array from collection object structure
+  // for collection preview we are getting collection array from collection object structure, 
+  // coverting hashed object structure to array with index as id which will be used as an index, conversion is done for array.map
   export const selectCollectionsForPreview = createSelector(
     [selectShopCollections],
-    collections => Object.keys(collections).map(key => collections[key])
-)
+    collections => collections ? Object.keys(collections).map(key => collections[key]) : []
+);
   
