@@ -13,9 +13,10 @@ import { HeaderContainer,
     //   OptionDiv, 
       OptionLink, 
       OptionsContainer } from './header.styles';
+import { signOutStart } from '../../redux/user/user.actions';
 
 
-const Header = ({ currentUser, hidden }) => (
+const Header = ({ currentUser, hidden, signOutStart }) => (
     <HeaderContainer>
         <LogoContainer to='/'>
             <Logo className="logo" />
@@ -33,7 +34,8 @@ const Header = ({ currentUser, hidden }) => (
                     (
                         // <OptionDiv onClick={() => auth.signOut()}>SIGN OUT</OptionDiv>
                         // another way of same css for diff element in styled component library
-                        <OptionLink as='div' onClick={() => auth.signOut()}>SIGN OUT</OptionLink>
+                        // <OptionLink as='div' onClick={() => auth.signOut()}>SIGN OUT</OptionLink>
+                        <OptionLink as='div' onClick={signOutStart}>SIGN OUT</OptionLink>
                     )
                     :
                     (<OptionLink to='/signin'>
@@ -66,4 +68,8 @@ const mapStateToProps = createStructuredSelector({
     hidden: selectCartHidden
 });
 
-export default connect(mapStateToProps)(Header);
+const mapDispatchToProps = dispatch => ({
+    signOutStart: () => dispatch(signOutStart())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

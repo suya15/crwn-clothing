@@ -25,7 +25,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 
   const snapshot = await userRef.get();
 
-  // this code simply creates the snapshot/data
+  // this code simply creates the snapshot/data if it doesnt exist already in the database
   if (!snapshot.exists) {
     const { displayName, email } = userAuth;
     const createdAt = new Date();
@@ -69,6 +69,16 @@ export const convertCollectionsSnapshotToMap = (collectionsSnapshot) => {
   }, {});
 };
 
+// utility for the persistence of session
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged(userAuth => {
+      unsubscribe();
+      resolve(userAuth);
+    }, reject);
+  });
+};
+
 // utility to make collections and documents to it
 export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
  const collectionRef = await firestore.collection(collectionKey);
@@ -87,8 +97,8 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
-const provider = new firebase.auth.GoogleAuthProvider();
-provider.setCustomParameters({ prompt: 'select_account' });
-export const signInWithGoogle = () => auth.signInWithPopup(provider);
+export const googleProvider = new firebase.auth.GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+export const signInWithGoogle = () => auth.signInWithPopup(googleProvider);
 
 export default firebase;

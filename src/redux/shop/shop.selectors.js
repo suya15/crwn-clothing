@@ -43,4 +43,19 @@ export const selectCollection = memoize(collectionUrlParam =>
     [selectShopCollections],
     collections => collections ? Object.keys(collections).map(key => collections[key]) : []
 );
+
+// selector written to keep in account the isFetching variable for api call and loading of shop
+export const selectIsCollectionFetching = createSelector(
+    [selectShop],
+    shop => shop.isFetching
+);
+
+
+// amazing selector for getting the boolean value from a value presense 
+// which will be further used to overcome the problem due to unavailability of values 
+// coz of occurence of render before component did mount
+export const selectIsCollectionsLoaded = createSelector(
+    [selectShop],
+    shop => !!shop.collections
+)
   

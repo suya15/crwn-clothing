@@ -4,8 +4,6 @@ import { withRouter } from 'react-router-dom';
 
 
 const MenuItem = ({ title, imageUrl, size, history, match, linkUrl }) => {
-    console.log(match);
-    console.log(linkUrl);
 
     return (
 
