@@ -1,4 +1,3 @@
-import UserActionTypes from "../user/user.types";
 import { CartActionTypes } from "./cart.types";
 import { addItemToCart, removeItemFromCart } from "./cart.utils";
 

@@ -1,65 +1,70 @@
+import React, {useEffect} from 'react';
+import { connect } from 'react-redux';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { createStructuredSelector } from 'reselect';
+
 import './App.css';
 import HomePage from './pages/homepage.component';
-
-import { Switch, Route, Redirect } from 'react-router-dom';
 import ShopPage from './pages/shop/shop.component';
 import Header from './components/header/header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
-
-import React from 'react';
-import { connect } from 'react-redux';
 import { selectCurrentUser } from './redux/user/user.selectors';
-import { createStructuredSelector } from 'reselect';
 import CheckoutPage from './pages/checkout/checkout.component';
 import { checkUserSession } from './redux/user/user.actions';
 // import { selectCollectionsForPreview } from './redux/shop/shop.selectors';
 
 
-class App extends React.Component {
+const App = ({ checkUserSession, currentUser }) => {
 
   // unsubscribing the auth to avoid memory leak
 
   // unsubscribeFromAuth = null;
 
 
-  componentDidMount() {
-    const { checkUserSession } = this.props;
+  // componentDidMount() {
+  //   const { checkUserSession } = this.props;
+  //   checkUserSession();
+  //   // const { setCurrentUser
+  //   //   //  collectionsArray 
+  //   //   } = this.props;
+
+  //     // we are not relying on any listeners like onAuthstateChange, we have moved to sagas
+  //   // this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+
+  //   //   if (userAuth) {
+
+  //   //     const userRef = await createUserProfileDocument(userAuth);
+
+  //   //     userRef.onSnapshot(snapshot => {
+  //   //       setCurrentUser({
+  //   //         id: snapshot.id,
+  //   //         ...snapshot.data()
+  //   //       })
+  //   //     });
+  //   //   }
+  //   //   else {
+  //   //     // always remember setState is async with its results // removed setState after using action dispatch
+  //   //     setCurrentUser(userAuth); // to setCurrentUser we only need to pass the values which we want to modify
+
+  //   //     // below function is called only so that we can write the shop data programmatically by calling a util
+  //   //     // function so that we dont have to write ourselves into database
+  //   //     // addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({title, items}))); 
+  //   //   }
+
+  //   // });
+  // }
+
+  // here as we know checkUserSession will not change , coz its coming from dispatch , 
+  //so we can use it like here but if in case  checUserSession in parent would have changed so 
+  // different syntax would have been  used to mimic componentDidMount
+  useEffect(() => {
     checkUserSession();
-    // const { setCurrentUser
-    //   //  collectionsArray 
-    //   } = this.props;
+  }, [checkUserSession]);
 
-      // we are not relying on any listeners like onAuthstateChange, we have moved to sagas
-    // this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+  // componentWillUnmount() {
+  //   this.unsubscribeFromAuth();
+  // }
 
-    //   if (userAuth) {
-
-    //     const userRef = await createUserProfileDocument(userAuth);
-
-    //     userRef.onSnapshot(snapshot => {
-    //       setCurrentUser({
-    //         id: snapshot.id,
-    //         ...snapshot.data()
-    //       })
-    //     });
-    //   }
-    //   else {
-    //     // always remember setState is async with its results // removed setState after using action dispatch
-    //     setCurrentUser(userAuth); // to setCurrentUser we only need to pass the values which we want to modify
-
-    //     // below function is called only so that we can write the shop data programmatically by calling a util
-    //     // function so that we dont have to write ourselves into database
-    //     // addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({title, items}))); 
-    //   }
-
-    // });
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeFromAuth();
-  }
-
-  render() {
 
     return (
       <div>
@@ -69,7 +74,7 @@ class App extends React.Component {
           <Route path='/shop' component={ShopPage} />
           <Route exact path='/checkout' component={CheckoutPage} />
           <Route exact path='/signin' render={
-            () => this.props.currentUser ?
+            () => currentUser ?
               (<Redirect to='/' />) :
               (<SignInAndSignUpPage />)
           } />
@@ -78,7 +83,6 @@ class App extends React.Component {
       </div>
     );
 
-  }
 
 }
 

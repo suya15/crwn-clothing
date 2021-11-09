@@ -1,28 +1,30 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { connect } from 'react-redux';
 
 import CustomButton from '../custom-button/custom-button.component';
 import FormInput from '../form-input/form-input.component';
 import './sign-in.styles.scss';
-import { auth, signInWithGoogle } from '../../firebase/firebase.utils';
 import { emailSignInStart, googleSignInStart } from '../../redux/user/user.actions';
 
-class SignIn extends React.Component {
-    constructor(props) {
-        super(props);
+const SignIn = ({ emailSignInStart, googleSignInStart }) => {
+
+    const [userCredentials, setCredentials] = useState({ email: '', password: '' })
+
+    // constructor(props) {
+    //     super(props);
 
 
-        this.state = {
-            email: '',
-            password: ''
-        }
-    }
+    //     this.state = {
+    //         email: '',
+    //         password: ''
+    //     }
+    // }
+    const { email, password } = userCredentials;
 
-    handleSubmit = async event => {
+    const handleSubmit = async event => {
         event.preventDefault();
-
-        const {email, password} = this.state;
-        const { emailSignInStart } = this.props;
+        // const { email, password } = this.state;
+        // const { emailSignInStart } = this.props;
         emailSignInStart(email, password);
         // try {
         //     await auth.signInWithEmailAndPassword(email, password);
@@ -36,59 +38,58 @@ class SignIn extends React.Component {
 
 
         // this.setState({ email: '', password: '' })
-    }
+    };
 
 
     // below same function for different inputs written dynamically
-    handleChange = event => {
+    const handleChange = event => {
 
         // destructuring for values what we need or extracting out of event.target
         const { value, name } = event.target;
 
-        // name will be taken out of event.target and will be set accordingly for both name and value
-        this.setState({ [name]: value })
-    }
+        // name will be taken out of event.target and will be set accordingly for both name and value, both name and value will be dynamically set
+        // this.setState({ [name]: value })
+        // we need use it and reuturn te changes just like we do in our reducer
+        setCredentials({ ...userCredentials, [name]: value })
+
+    };
 
 
+    return (
+        <div className="sign-in">
+            <h2>I already have an account</h2>
+            <span>Sign in with your email and password</span>
 
-    render() {
-        const { googleSignInStart } = this.props;
-        return (
-            <div className="sign-in">
-                <h2>I already have an account</h2>
-                <span>Sign in with your email and password</span>
-
-                <form onSubmit={this.handleSubmit}>
-                    <FormInput name="email"
-                        type="email"
-                        label="email"
-                        handleChange={this.handleChange}
-                        value={this.state.email}
-                        required />
-                    <FormInput name="password"
-                        type="password"
-                        label="password"
-                        handleChange={this.handleChange}
-                        value={this.state.password}
-                        required />
+            <form onSubmit={handleSubmit}>
+                <FormInput name="email"
+                    type="email"
+                    label="email"
+                    handleChange={handleChange}
+                    value={email}
+                    required />
+                <FormInput name="password"
+                    type="password"
+                    label="password"
+                    handleChange={handleChange}
+                    value={password}
+                    required />
 
 
-                    <div className="buttons">
-                        <CustomButton type="submit"> Sign in </CustomButton>
-                        <CustomButton type="button" onClick={googleSignInStart} isGoogleSignIn> Sign in With Google </CustomButton>
-                    </div>
+                <div className="buttons">
+                    <CustomButton type="submit"> Sign in </CustomButton>
+                    <CustomButton type="button" onClick={googleSignInStart} isGoogleSignIn> Sign in With Google </CustomButton>
+                </div>
 
-                </form>
-            </div>
-        )
+            </form>
+        </div>
+    )
 
-    }
 }
 
 
 const mapDispatchToProps = dispatch => ({
     googleSignInStart: () => dispatch(googleSignInStart()),
-    emailSignInStart: (email, password) => dispatch(emailSignInStart({email, password}))
+    emailSignInStart: (email, password) => dispatch(emailSignInStart({ email, password }))
 });
 
 
